@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="draft.css" />
+    <!-- <script src="main.js"></script> -->
+</head>
+<body>
+<div id= 'fiz'>
+        <div style='background-color:blue;'>Here is paragraph <b>one</b>. This will be at the top of the
+        page.</div>
+        <div style='background-color:yellow;'>Here is paragraph <b>two</b>. This will be underneath the
+        other elements</div>
+        <div style='background-color:red;'>Here is paragraph <b>three</b>. This will be at the bottom
+         of the page.</div>
+</div>
+
+<P id='pa' >This example illustrates the two essential elements of the module pattern: a module closure and a moduleobject. The module closure is a function that encapsulates the module's implementation, in this case the variable 'key' and the function 'sendMessage'. The module object contains the exported variables and functions of the module. Simple modules may create and return the module object. The module above takes the module object as a parameter, 'exports', and adds the 'sendMessage'property to the module object. This augmentation approach simplifies dynamic loading of modules and also supports separation of module code into multiple files.
+The example assumes that an outer lexical scope defines the functions 'generateSecretKey' and 'sendSecureMessage'; it also assumes that the outer scope has assigned the module object to the variable 'MessageModule'.
+TypeScriptnamespaces provide a mechanism for succinctly expressing the module pattern. In TypeScript, programmers can combine the module pattern with the class pattern by nesting namespaces and classes within an outer namespace.
+The following example shows the definition and use of a simple namespace.
+namespaceM{ vars="hello"; exportfunctionf(){ returns;</p>
+
+  <div id="hello">
+
+    <P >M.f();
+M.s;// Error, s is not exported
+In this example, variable 's' is a private feature of the namespace, but function 'f' is exported from the namespace and accessible to code outside of the namespace. If we were to describe the effect of namespace'M' in terms of interfaces and variables, we would write
+interfaceM{
+f():string;</p>
+    <P>varM:M;
+The interface 'M' summarizes the externally visible behavior of namespace'M'. In this example, we can use the same name for the interface as for the initialized variable because in TypeScript type names and variable names do not conflict: each lexical scope contains a variable declaration space and type declaration space (see section 2.3 for more details).
+The TypeScript compiler emits the following JavaScript code for the namespace:
+varM;
+(function(M){
+vars="hello";
+functionf(){
+returns;
+}
+M.f=f;
+})(M||(M={}));
+In this case, the compiler assumes that the namespace object resides in global variable 'M', which may or may not have been initialized to the desired namespace object.
+1.11	Modules
+TypeScript also supports ECMAScript 2015modules, which are files that contain top-level export and importdirectives. For this type of module the TypeScript compiler can emit both ECMAScript 2015 compliant code and down-level ECMAScript 3 or 5 compliant code for a variety of module loading systems, including CommonJS, Asynchronous Module Definition (AMD), and Universal Module Definition (UMD).
+</p>
+    <P>	Basic Concepts
+The remainder of this document is the formal specification of the TypeScript programming language andis intended to be read as an adjunct to the ECMAScript 2015 Language Specification (specifically, the ECMA-262 Standard, 6th Edition). This document describes the syntactic grammar added by TypeScript along with the compile-time processing and type checking performed by the TypeScript compiler, but it only minimally discusses the run-time behavior of programs since that is covered by the ECMAScript specification.
+2.1	Grammar Conventions
+The syntactic grammar added by TypeScript language is specified throughout this document using the existingconventions and production names of the ECMAScript grammar. In places where TypeScript augments an existing grammar production it is so noted. For example:
+Declaration:( Modified )
+…
+InterfaceDeclaration
+TypeAliasDeclaration
+EnumDeclaration
+The '( Modified )' annotation indicates that an existing grammar production is being replaced, and the '…' references the contents of the original grammar production.
+Similar to the ECMAScript grammar, if the phrase "[no LineTerminator here]" appears in the right-hand side of a production of the syntactic grammar, it indicates that the production is not a match if a LineTerminator occurs in the input stream at the indicated position.
+2.2	Names</p>a
+
+<p>
+A core purpose of the TypeScript compiler is to track the named entities in a program and validate that they are used according to their designated meaning. Names in TypeScript can be written in several ways, depending on context. Specifically, a name can be written as
+•	an IdentifierName,
+•	a StringLiteral in a property name,
+•	a NumericLiteral in a property name, or
+•	a ComputedPropertyName that denotes a well-known symbol (2.2.3).
+Most commonly, names are written to conform with the Identifier production, which is any IdentifierName that isn't a reserved word.
+2.2.1	Reserved Words
+The following keywords are reserved and cannot be used as an Identifier:
+breakcasecatchclass</p>
+
+ 
+
+    <P>const             continue          debugger          default
+delete            do                else              enum
+export            extends           false             finally
+for               function          if                import
+in                instanceof        new               null
+return            super             switchthis
+throw             true              try               typeof
+var               void              while             with
+The following keywords cannot be used as identifiers in strict mode code, but are otherwise not restricted:
+implements        interface         let               package
+private           protected         public            static
+yield
+The following keywords cannot be used as user defined type names, but are otherwise not restricted:
+any               boolean           number            string
+symbol
+The following keywords have special meaning in certain contexts, but are valid identifiers:
+abstractasasyncawait
+constructordeclarefromget
+is                modulenamespaceof
+requireset               type
+2.2.2	Property Names
+The PropertyName production from the ECMAScript grammar is reproduced below:
+PropertyName:
+LiteralPropertyName
+ComputedPropertyName
+LiteralPropertyName:
+IdentifierName
+StringLiteral
+NumericLiteral
+ComputedPropertyName:
+[AssignmentExpression]</p>
+ </div>
+
+    <P>MAScript 2015 permits object literals and classes to declare members with computed property names. A computed property name specifies an expression that computes the actual property name at run-time. Because the final property name isn't known at compile-time, TypeScript can only perform limited checks for entities declared with computed property names. However, a subset of computed property names known as well-known symbols can be used anywhere a PropertyName is expected, including property names within types. A computed property name is a well-known symbol if it is of the form
+[ Symbol . xxx ]
+In a well-known symbol, the identifier to the right of the dot must denote a property of the primitive type symbol in the type of the global variable 'Symbol', or otherwise an error occurs.
+In a PropertyName that specifies a ComputedPropertyName, the computed property name is required to denote a well-known symbol unless the property name occurs in a property assignment of an object literal (4.5) or a property member declaration in a non-ambient class (8.4).
+Below is an example of an interface that declares a property with a well-known symbol name:
+interface Iterable<T> {
+    [Symbol.iterator](): Iterator<T>;
+}
+TODO: Update to reflect treatment of computed property names with literal expressions.
+2.3	Declarations
+Declarations introduce names in their associateddeclaration spaces. A name must be unique in its declaration space and candenote a value, a type, or a namespace, or some combination thereof. Effectively, a single name can have as many as three distinct meanings. For example:
+var X: string;    // Value named X</p>
+    <P>A property name can be any identifier (including a reserved word), a string literal, a numeric literal, or a computed property name. String literals may be used to give properties names that are not valid identifiers, such as names containing blanks. Numeric literal property names are equivalent to string literal property names with the string representation of the numeric literal, as defined in the ECMAScript specification.
+2.2.3	Computed Property Names
+EC
+type X = number;  // Type named X
+namespace X {     // Namespace named X
+type Y = string;
+}
+A name that denotes a value has an associated type (section 3) and can be referenced in expressions (section 4.3). A name that denotes a type can be used by itself in a type referenceor on the right hand side of a dot in a type reference (3.8.2). A name that denotes a namespace can be used one the left hand side of a dotin a ty
+</p>
+     <P>M.f();
+M.s;// Error, s is not exported
+In this example, variable 's' is a private feature of the namespace, but function 'f' is exported from the namespace and accessible to code outside of the namespace. If we were to describe the effect of namespace'M' in terms of interfaces and variables, we would write
+interfaceM{
+f():string;</p>
+    <P>varM:M;
+The interface 'M' summarizes the externally visible behavior of namespace'M'. In this example, we can use the same name for the interface as for the initialized variable because in TypeScript type names and variable names do not conflict: each lexical scope contains a variable declaration space and type declaration space (see section 2.3 for more details).
+The TypeScript compiler emits the following JavaScript code for the namespace:
+varM;
+(function(M){
+vars="hello";
+functionf(){
+returns;
+}
+M.f=f;
+})(M||(M={}));
+In this case, the compiler assumes that the namespace object resides in global variable 'M', which may or may not have been initialized to the desired namespace object.
+1.11	Modules
+TypeScript also supports ECMAScript 2015modules, which are files that contain top-level export and importdirectives. For this type of module the TypeScript compiler can emit both ECMAScript 2015 compliant code and down-level ECMAScript 3 or 5 compliant code for a variety of module loading systems, including CommonJS, Asynchronous Module Definition (AMD), and Universal Module Definition (UMD).
+</p>
+    <P>	Basic Concepts
+The remainder of this document is the formal specification of the TypeScript programming language andis intended to be read as an adjunct to the ECMAScript 2015 Language Specification (specifically, the ECMA-262 Standard, 6th Edition). This document describes the syntactic grammar added by TypeScript along with the compile-time processing and type checking performed by the TypeScript compiler, but it only minimally discusses the run-time behavior of programs since that is covered by the ECMAScript specification.
+2.1	Grammar Conventions
+The syntactic grammar added by TypeScript language is specified throughout this document using the existingconventions and production names of the ECMAScript grammar. In places where TypeScript augments an existing grammar production it is so noted. For example:
+Declaration:( Modified )
+…
+InterfaceDeclaration
+TypeAliasDeclaration
+EnumDeclaration
+The '( Modified )' annotation indicates that an existing grammar production is being replaced, and the '…' references the contents of the original grammar production.
+Similar to the ECMAScript grammar, if the phrase "[no LineTerminator here]" appears in the right-hand side of a production of the syntactic grammar, it indicates that the production is not a match if a LineTerminator occurs in the input stream at the indicated position.
+2.2	Names
+A core purpose of the TypeScript compiler is to track the named entities in a program and validate that they are used according to their designated meaning. Names in TypeScript can be written in several ways, depending on context. Specifically, a name can be written as
+•	an IdentifierName,
+•	a StringLiteral in a property name,
+•	a NumericLiteral in a property name, or
+•	a ComputedPropertyName that denotes a well-known symbol (2.2.3).
+Most commonly, names are written to conform with the Identifier production, which is any IdentifierName that isn't a reserved word.
+2.2.1	Reserved Words
+The following keywords are reserved and cannot be used as an Identifier:
+breakcasecatchclass</p>
+    <P>const             continue          debugger          default
+delete            do                else              enum
+export            extends           false             finally
+for               function          if                import
+in                instanceof        new               null
+return            super             switchthis
+throw             true              try               typeof
+var               void              while             with
+The following keywords cannot be used as identifiers in strict mode code, but are otherwise not restricted:
+implements        interface         let               package
+private           protected         public            static
+yield
+The following keywords cannot be used as user defined type names, but are otherwise not restricted:
+any               boolean           number            string
+symbol
+The following keywords have special meaning in certain contexts, but are valid identifiers:
+abstractasasyncawait
+constructordeclarefromget
+is                modulenamespaceof
+requireset               type
+2.2.2	Property Names
+The PropertyName production from the ECMAScript grammar is reproduced below:
+PropertyName:
+LiteralPropertyName
+ComputedPropertyName
+LiteralPropertyName:
+IdentifierName
+StringLiteral
+NumericLiteral
+ComputedPropertyName:
+[AssignmentExpression]</p>
+    <P>MAScript 2015 permits object literals and classes to declare members with computed property names. A computed property name specifies an expression that computes the actual property name at run-time. Because the final property name isn't known at compile-time, TypeScript can only perform limited checks for entities declared with computed property names. However, a subset of computed property names known as well-known symbols can be used anywhere a PropertyName is expected, including property names within types. A computed property name is a well-known symbol if it is of the form
+[ Symbol . xxx ]
+In a well-known symbol, the identifier to the right of the dot must denote a property of the primitive type symbol in the type of the global variable 'Symbol', or otherwise an error occurs.
+In a PropertyName that specifies a ComputedPropertyName, the computed property name is required to denote a well-known symbol unless the property name occurs in a property assignment of an object literal (4.5) or a property member declaration in a non-ambient class (8.4).
+Below is an example of an interface that declares a property with a well-known symbol name:
+interface Iterable<T> {
+    [Symbol.iterator](): Iterator<T>;
+}
+TODO: Update to reflect treatment of computed property names with literal expressions.
+2.3	Declarations
+Declarations introduce names in their associateddeclaration spaces. A name must be unique in its declaration space and candenote a value, a type, or a namespace, or some combination thereof. Effectively, a single name can have as many as three distinct meanings. For example:
+var X: string;    // Value named X</p>
+    <P>A property name can be any identifier (including a reserved word), a string literal, a numeric literal, or a computed property name. String literals may be used to give properties names that are not valid identifiers, such as names containing blanks. Numeric literal property names are equivalent to string literal property names with the string representation of the numeric literal, as defined in the ECMAScript specification.
+2.2.3	Computed Property Names
+EC
+type X = number;  // Type named X
+namespace X {     // Namespace named X
+type Y = string;
+}
+A name that denotes a value has an associated type (section 3) and can be referenced in expressions (section 4.3). A name that denotes a type can be used by itself in a type referenceor on the right hand side of a dot in a type reference (3.8.2). A name that denotes a namespace can be used one the left hand side of a dotin a ty
+</p>
+     <P>M.f();
+M.s;// Error, s is not exported
+In this example, variable 's' is a private feature of the namespace, but function 'f' is exported from the namespace and accessible to code outside of the namespace. If we were to describe the effect of namespace'M' in terms of interfaces and variables, we would write
+interfaceM{
+f():string;</p>
+    <P>varM:M;
+The interface 'M' summarizes the externally visible behavior of namespace'M'. In this example, we can use the same name for the interface as for the initialized variable because in TypeScript type names and variable names do not conflict: each lexical scope contains a variable declaration space and type declaration space (see section 2.3 for more details).
+The TypeScript compiler emits the following JavaScript code for the namespace:
+varM;
+(function(M){
+vars="hello";
+functionf(){
+returns;
+}
+M.f=f;
+})(M||(M={}));
+In this case, the compiler assumes that the namespace object resides in global variable 'M', which may or may not have been initialized to the desired namespace object.
+1.11	Modules
+TypeScript also supports ECMAScript 2015modules, which are files that contain top-level export and importdirectives. For this type of module the TypeScript compiler can emit both ECMAScript 2015 compliant code and down-level ECMAScript 3 or 5 compliant code for a variety of module loading systems, including CommonJS, Asynchronous Module Definition (AMD), and Universal Module Definition (UMD).
+</p>
+    <P>	Basic Concepts
+The remainder of this document is the formal specification of the TypeScript programming language andis intended to be read as an adjunct to the ECMAScript 2015 Language Specification (specifically, the ECMA-262 Standard, 6th Edition). This document describes the syntactic grammar added by TypeScript along with the compile-time processing and type checking performed by the TypeScript compiler, but it only minimally discusses the run-time behavior of programs since that is covered by the ECMAScript specification.
+2.1	Grammar Conventions
+The syntactic grammar added by TypeScript language is specified throughout this document using the existingconventions and production names of the ECMAScript grammar. In places where TypeScript augments an existing grammar production it is so noted. For example:
+Declaration:( Modified )
+…
+InterfaceDeclaration
+TypeAliasDeclaration
+EnumDeclaration
+The '( Modified )' annotation indicates that an existing grammar production is being replaced, and the '…' references the contents of the original grammar production.
+Similar to the ECMAScript grammar, if the phrase "[no LineTerminator here]" appears in the right-hand side of a production of the syntactic grammar, it indicates that the production is not a match if a LineTerminator occurs in the input stream at the indicated position.
+2.2	Names
+A core purpose of the TypeScript compiler is to track the named entities in a program and validate that they are used according to their designated meaning. Names in TypeScript can be written in several ways, depending on context. Specifically, a name can be written as
+•	an IdentifierName,
+•	a StringLiteral in a property name,
+•	a NumericLiteral in a property name, or
+•	a ComputedPropertyName that denotes a well-known symbol (2.2.3).
+Most commonly, names are written to conform with the Identifier production, which is any IdentifierName that isn't a reserved word.
+2.2.1	Reserved Words
+The following keywords are reserved and cannot be used as an Identifier:
+breakcasecatchclass</p>
+    <P>const             continue          debugger          default
+delete            do                else              enum
+export            extends           false             finally
+for               function          if                import
+in                instanceof        new               null
+return            super             switchthis
+throw             true              try               typeof
+var               void              while             with
+The following keywords cannot be used as identifiers in strict mode code, but are otherwise not restricted:
+implements        interface         let               package
+private           protected         public            static
+yield
+The following keywords cannot be used as user defined type names, but are otherwise not restricted:
+any               boolean           number            string
+symbol
+The following keywords have special meaning in certain contexts, but are valid identifiers:
+abstractasasyncawait
+constructordeclarefromget
+is                modulenamespaceof
+requireset               type
+2.2.2	Property Names
+The PropertyName production from the ECMAScript grammar is reproduced below:
+PropertyName:
+LiteralPropertyName
+ComputedPropertyName
+LiteralPropertyName:
+IdentifierName
+StringLiteral
+NumericLiteral
+ComputedPropertyName:
+[AssignmentExpression]</p>
+    <P>MAScript 2015 permits object literals and classes to declare members with computed property names. A computed property name specifies an expression that computes the actual property name at run-time. Because the final property name isn't known at compile-time, TypeScript can only perform limited checks for entities declared with computed property names. However, a subset of computed property names known as well-known symbols can be used anywhere a PropertyName is expected, including property names within types. A computed property name is a well-known symbol if it is of the form
+[ Symbol . xxx ]
+In a well-known symbol, the identifier to the right of the dot must denote a property of the primitive type symbol in the type of the global variable 'Symbol', or otherwise an error occurs.
+In a PropertyName that specifies a ComputedPropertyName, the computed property name is required to denote a well-known symbol unless the property name occurs in a property assignment of an object literal (4.5) or a property member declaration in a non-ambient class (8.4).
+Below is an example of an interface that declares a property with a well-known symbol name:
+interface Iterable<T> {
+    [Symbol.iterator](): Iterator<T>;
+}
+TODO: Update to reflect treatment of computed property names with literal expressions.
+2.3	Declarations
+Declarations introduce names in their associateddeclaration spaces. A name must be unique in its declaration space and candenote a value, a type, or a namespace, or some combination thereof. Effectively, a single name can have as many as three distinct meanings. For example:
+var X: string;    // Value named X</p>
+    <P>A property name can be any identifier (including a reserved word), a string literal, a numeric literal, or a computed property name. String literals may be used to give properties names that are not valid identifiers, such as names containing blanks. Numeric literal property names are equivalent to string literal property names with the string representation of the numeric literal, as defined in the ECMAScript specification.
+2.2.3	Computed Property Names
+EC
+type X = number;  // Type named X
+namespace X {     // Namespace named X
+type Y = string;
+}
+A name that denotes a value has an associated type (section 3) and can be referenced in expressions (section 4.3). A name that denotes a type can be used by itself in a type referenceor on the right hand side of a dot in a type reference (3.8.2). A name that denotes a namespace can be used one the left hand side of a dotin a ty
+<p id="stick">amakuru</p>
+
+</p>
+     <P>M.f();
+M.s;// Error, s is not exported
+In this example, variable 's' is a private feature of the namespace, but function 'f' is exported from the namespace and accessible to code outside of the namespace. If we were to describe the effect of namespace'M' in terms of interfaces and variables, we would write
+interfaceM{
+f():string;</p>
+    <P>varM:M;
+The interface 'M' summarizes the externally visible behavior of namespace'M'. In this example, we can use the same name for the interface as for the initialized variable because in TypeScript type names and variable names do not conflict: each lexical scope contains a variable declaration space and type declaration space (see section 2.3 for more details).
+The TypeScript compiler emits the following JavaScript code for the namespace:
+varM;
+(function(M){
+vars="hello";
+functionf(){
+returns;
+}
+M.f=f;
+})(M||(M={}));
+In this case, the compiler assumes that the namespace object resides in global variable 'M', which may or may not have been initialized to the desired namespace object.
+1.11	Modules
+TypeScript also supports ECMAScript 2015modules, which are files that contain top-level export and importdirectives. For this type of module the TypeScript compiler can emit both ECMAScript 2015 compliant code and down-level ECMAScript 3 or 5 compliant code for a variety of module loading systems, including CommonJS, Asynchronous Module Definition (AMD), and Universal Module Definition (UMD).
+</p>
+    <P id="scrollbox">	Basic Concepts
+The remainder of this document is the formal specification of the TypeScript programming language andis intended to be read as an adjunct to the ECMAScript 2015 Language Specification (specifically, the ECMA-262 Standard, 6th Edition). This document describes the syntactic grammar added by TypeScript along with the compile-time processing and type checking performed by the TypeScript compiler, but it only minimally discusses the run-time behavior of programs since that is covered by the ECMAScript specification.
+2.1	Grammar Conventions
+The syntactic grammar added by TypeScript language is specified throughout this document using the existingconventions and production names of the ECMAScript grammar. In places where TypeScript augments an existing grammar production it is so noted. For example:
+Declaration:( Modified )
+…
+InterfaceDeclaration
+TypeAliasDeclaration
+EnumDeclaration
+The '( Modified )' annotation indicates that an existing grammar production is being replaced, and the '…' references the contents of the original grammar production.
+Similar to the ECMAScript grammar, if the phrase "[no LineTerminator here]" appears in the right-hand side of a production of the syntactic grammar, it indicates that the production is not a match if a LineTerminator occurs in the input stream at the indicated position.
+2.2	Names<span style="color:red;"> instanceof</span>
+A core purpose of the TypeScript compiler is to track the named entities in a program and validate that they are used according to their designated meaning. Names in TypeScript can be written in several ways, depending on context. Specifically, a name can be written as
+•	an IdentifierName,
+•	a StringLiteral in a property name,
+•	a NumericLiteral in a property name, or
+•	a ComputedPropertyName that denotes a well-known symbol (2.2.3).
+Most commonly, names are written to conform with the Identifier production, which is any IdentifierName that isn't a reserved word.
+2.2.1	Reserved Words
+The following keywords are reserved and cannot be used as an Identifier:
+breakcasecatchclass</p>
+    <P>const             continue          debugger          default
+delete            do                else              enum
+export            extends           false             finally
+for               function          if                import
+in                       new               null
+return            super             switchthis
+throw             true              try               typeof
+var               void              while             with
+The following keywords cannot be used as identifiers in strict mode code, but are otherwise not restricted:
+implements        interface         let               package
+private           protected         public            static
+yield
+The following keywords cannot be used as user defined type names, but are otherwise not restricted:
+any               boolean           number            string
+symbol
+The following keywords have special meaning in certain contexts, but are valid identifiers:
+abstractasasyncawait
+constructordeclarefromget
+is                modulenamespaceof
+requireset               type
+2.2.2	Property Names
+The PropertyName production from the ECMAScript grammar is reproduced below:
+PropertyName:
+LiteralPropertyName
+ComputedPropertyName
+LiteralPropertyName:
+IdentifierName
+StringLiteral
+NumericLiteral
+ComputedPropertyName:
+[AssignmentExpression]</p>
+
+
+    <P>MAScript 2015 permits object literals and classes to declare members with computed property names. A computed property name specifies an expression that computes the actual property name at run-time. Because the final property name isn't known at compile-time, TypeScript can only perform limited checks for entities declared with computed property names. However, a subset of computed property names known as well-known symbols can be used anywhere a PropertyName is expected, including property names within types. A computed property name is a well-known symbol if it is of the form
+[ Symbol . xxx ]
+In a well-known symbol, the identifier to the right of the dot must denote a property of the primitive type symbol in the type of the global variable 'Symbol', or otherwise an error occurs.
+In a PropertyName that specifies a ComputedPropertyName, the computed property name is required to denote a well-known symbol unless the property name occurs in a property assignment of an object literal (4.5) or a property member declaration in a non-ambient class (8.4).
+Below is an example of an interface that declares a property with a well-known symbol name:
+interface Iterable<T> {
+    [Symbol.iterator](): Iterator<T>;
+}
+TODO: Update to reflect treatment of computed property names with literal expressions.
+2.3	Declarations
+Declarations introduce names in their associateddeclaration spaces. A name must be unique in its declaration space and candenote a value, a type, or a namespace, or some combination thereof. Effectively, a single name can have as many as three distinct meanings. For example:
+var X: string;    // Value named X</p>
+    <P>A property name can be any identifier (including a reserved word), a string literal, a numeric literal, or a computed property name. String literals may be used to give properties names that are not valid identifiers, such as names containing blanks. Numeric literal property names are equivalent to string literal property names with the string representation of the numeric literal, as defined in the ECMAScript specification.
+2.2.3	Computed Property Names
+EC
+type X = number;  // Type named X
+namespace X {     // Namespace named X
+type Y = string;
+}
+A name that denotes a value has an associated type (section 3) and can be referenced in expressions (section 4.3). A name that denotes a type can be used by itself in a type referenceor on the right hand side of a dot in a type reference (3.8.2). A name that denotes a namespace can be used one the left hand side of a dotin a ty
+</p>
+   
+
+</body>
+</html>
